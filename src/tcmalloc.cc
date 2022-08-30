@@ -88,6 +88,7 @@
 //   goes from about 1100 ns to about 300 ns.
 
 #include "config.h"
+#include <cstdlib>
 // At least for gcc on Linux/i386 and Linux/amd64 not adding throw()
 // to tc_xxx functions actually ends up generating better code.
 #define PERFTOOLS_NOTHROW
@@ -194,9 +195,9 @@ DECLARE_int64(tcmalloc_heap_limit_mb);
 // always set TCMALLOC_LARGE_ALLOC_REPORT_THRESHOLD manually if you
 // want this functionality.
 #ifdef _WIN32
-const int64 kDefaultLargeAllocReportThreshold = static_cast<int64>(1) << 62;
+const int64 kDefaultLargeAllocReportThreshold = static_cast<int64>(1) << 24;
 #else
-const int64 kDefaultLargeAllocReportThreshold = static_cast<int64>(1) << 30;
+const int64 kDefaultLargeAllocReportThreshold = static_cast<int64>(1) << 24;
 #endif
 DEFINE_int64(tcmalloc_large_alloc_report_threshold,
              EnvToInt64("TCMALLOC_LARGE_ALLOC_REPORT_THRESHOLD",
@@ -1321,6 +1322,8 @@ static void ReportLargeAlloc(Length num_pages, void* result) {
   }
   printer.printf("\n");
   write(STDERR_FILENO, buffer, strlen(buffer));
+  // abort for coredump
+  std::abort();
 }
 
 // Must be called with the page lock held.

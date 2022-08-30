@@ -1,0 +1,17 @@
+## Install
+```
+./autogen.sh
+./configure --prefix=YOUR_PATH --enable-frame-pointers
+make && make install
+```
+
+## Usage
+**链接gperftools**
+在程序中链接gperftools库 -ltcmalloc_and_profiler，并在编译选项中增加-fno-omit-frame-pointer。
+
+**CPU采样**
+有三种采样方式：
+可以通过环境变量 CPUPROFILE_FREQUENCY = x(default = 100) 来控制采样率。默认是100次/s.
+CPUPROFILE=<profile-path> ./a.out      （适用于运行一段时间后退出的程序）
+CPUPROFILE=<profile-path> CPUPROFILESIGNAL=12 ./a.out & 然后使用kill -12 <pid>来启动profiler, 之后使用kill -12 <pid>来关闭profiler     （适用于一直运行的程序）
+functions in <gperftools/profiler.h> (ProfilerStart, ProfilerStop etc)       （会入侵代码）
